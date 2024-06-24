@@ -84,7 +84,7 @@
 
 host: `http://localhost:8000/api`
 
-+ Se puede importar el archivo `Postaman/postman_collection.json` en Postman para poder probar la API rapidamente.
++ Se puede importar el archivo `Postman/postman_collection.json` en Postman para poder probar la API rapidamente.
 
 ### Rutas de la API `/restaurante`
 
