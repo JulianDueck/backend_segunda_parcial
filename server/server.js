@@ -22,14 +22,14 @@ app.use('/api/reserva', require('./routes/reserva.routes'));
 // Database connection and server start
 sequelize.authenticate()
     .then(() => {
-        console.log('💾 Conexión establecida con la base de datos.');
+        console.log('Conexión establecida con la base de datos.');
         // Sync database 
         sequelize.sync({ force: false })
             .then(() => {
-                console.log('✔ Sincronización completada.');
+                console.log('Sincronización completada.');
                 app.listen(PORT, () => {
                     // Start server
-                    console.log(`🚀 Servidor escuchando en el puerto ${PORT}.`);
+                    console.log(`Servidor escuchando en el puerto ${PORT}.`);
                 });
             })
             .catch(error => {

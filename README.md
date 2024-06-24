@@ -82,7 +82,7 @@
 
 ## Endpoints de la API
 
-host: `http://localhost:3000/api`
+host: `http://localhost:8000/api`
 
 + Se puede importar el archivo `Postaman/postman_collection.json` en Postman para poder probar la API rapidamente.
 
