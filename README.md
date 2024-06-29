@@ -112,3 +112,20 @@ host: `http://localhost:8000/api`
 + `GET` /reserva
 + `GET` /reserva/:idRestaurante/:fecha/:horaInicio/:horaFin
 + `POST` /reserva
+
+### Rutas de la APi `/categoria`
+
++ `GET` /categoria
++ `GET` /categoria/:id
++ `POST` /categoria
++ `PUT` /categoria/:id
++ `DELETE` /categoria/:id
+
+### Rutas de la APi `/producto`
+
++ `GET` /producto
++ `GET` /producto/:id
++ `POST` /producto
++ `PUT` /producto/:id
++ `DELETE` /producto/:id
+  
