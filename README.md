@@ -128,4 +128,18 @@ host: `http://localhost:8000/api`
 + `POST` /producto
 + `PUT` /producto/:id
 + `DELETE` /producto/:id
+
+### Rutas de la APi `/detalle`
+
++ `GET` /detalle
++ `GET` /detalle/:cabecera_id
++ `POST` /detalle
   
+### Rutas de la APi `/cabecera`
+
++ `GET` /cabecera
++ `GET` /cabecera/:id
++ `GET` /cabecera/mesa/:id
++ `POST` /cabecera
++ `PUT` /cabecera/:id
++ `PUT` /cabecera/cerrar/:id
