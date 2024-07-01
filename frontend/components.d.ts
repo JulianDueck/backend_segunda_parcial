@@ -20,9 +20,11 @@ declare module 'vue' {
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Message: typeof import('primevue/message')['default']
+    Multiselect: typeof import('./src/components/Multiselect.vue')['default']
     MultiSelect: typeof import('primevue/multiselect')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('primevue/select')['default']
+    SelectSearch: typeof import('./src/components/selectSearch.vue')['default']
   }
 }
