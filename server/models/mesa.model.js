@@ -29,6 +29,11 @@ const Mesa = sequelize.define('Mesa', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    estado: {
+        type: DataTypes.STRING(10),
+        allowNull: false,
+        defaultValue: 'desocupado'
+    },
 });
 
 // Establecer relación entre mesa y restaurante, un restaurante tiene muchas mesas

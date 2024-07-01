@@ -3,7 +3,16 @@ const { Producto } = require('./../models/producto.model');
 
 // GET /api/detalle
 const findAll = (req, res) => {
-    Detalle.findAll()
+    Detalle.findAll({include: [
+            {
+                model: Producto,
+                attributes: ['nombre', 'precio']
+            },
+            {
+                model: Cabecera,
+                attributes: ['total']
+            }
+        ]})
         .then(data => {
             res.send(data);
         })
@@ -43,7 +52,14 @@ const create = (req, res) => {
     };
 
     Detalle.create(detalle)
-        .then(data => {
+        .then(async data => {
+            const producto = await Producto.findByPk(detalle.id_producto)
+            const cabecera = await Cabecera.findByPk(detalle.id_cabecera);
+            const total = cabecera.total + detalle.cantidad * producto.precio
+            Cabecera.update(
+                { total: total },
+                { where: { id: detalle.id_cabecera } }
+            );
             res.send(data);
         })
         .catch(error => {
@@ -51,7 +67,13 @@ const create = (req, res) => {
                 message:
                     error.message || "Ha ocurrido un error al crear el detalle."
             });
-        });
+        })
+            
+    .catch(error => {
+        console.error(`Error al actualizar la cabecera con id ${detalle.id_cabecera}:`, error);
+        res.status(500).json({ error: `Error al actualizar la cabecera con id ${detalle.id_cabecera}.` });
+    });
+    
 };
 
 module.exports = {
