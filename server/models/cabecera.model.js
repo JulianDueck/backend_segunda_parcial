@@ -16,6 +16,7 @@ const Cabecera = sequelize.define('cabecera', {
     total: {
         type: DataTypes.FLOAT,
         allowNull: false,
+        defaultValue: 0,
     },
     fecha_cierre: {
         type: DataTypes.DATE,
@@ -23,8 +24,8 @@ const Cabecera = sequelize.define('cabecera', {
     },
 });
 
-Consumo.belongsTo(Mesa, { foreignKey: 'id_mesa' });
+Cabecera.belongsTo(Mesa, { foreignKey: 'id_mesa' });
 
-Consumo.belongsTo(Cliente, { foreignKey: 'id_cliente' });
+Cabecera.belongsTo(Cliente, { foreignKey: 'id_cliente' });
 
 module.exports = { Cabecera };

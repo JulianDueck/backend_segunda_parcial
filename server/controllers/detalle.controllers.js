@@ -1,4 +1,5 @@
 const { Detalle } = require('./../models/detalle.model');
+const { Producto } = require('./../models/producto.model');
 
 // GET /api/detalle
 const findAll = (req, res) => {
@@ -14,11 +15,11 @@ const findAll = (req, res) => {
         });
 };
 
-// GET /api/detalle/:cabecera_id
+// GET /api/detalle/:id_cabecera
 const findByCabeceraId = (req, res) => {
-    const { cabecera_id } = req.params;
+    const { id_cabecera } = req.params;
     Detalle.findAll({
-        where: { cabecera_id: cabecera_id }
+        where: { id_cabecera }, include: [Producto]
     })
         .then(detalles => {
             if (!detalles) {
@@ -37,7 +38,8 @@ const findByCabeceraId = (req, res) => {
 const create = (req, res) => {
     const detalle = {
         cantidad: req.body.cantidad,
-        cabecera_id: req.body.cabecera_id
+        id_cabecera: req.body.id_cabecera,
+        id_producto: req.body.id_producto
     };
 
     Detalle.create(detalle)
