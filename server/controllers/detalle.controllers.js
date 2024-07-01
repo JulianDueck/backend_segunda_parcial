@@ -1,8 +1,19 @@
 const { Detalle } = require('./../models/detalle.model');
+const { Cabecera } = require('../models/cabecera.model');
+const { Producto } = require('../models/producto.model');
 
 // GET /api/detalle
 const findAll = (req, res) => {
-    Detalle.findAll()
+    Detalle.findAll({include: [
+            {
+                model: Producto,
+                attributes: ['nombre', 'precio']
+            },
+            {
+                model: Cabecera,
+                attributes: ['total']
+            }
+        ]})
         .then(data => {
             res.send(data);
         })
@@ -16,10 +27,20 @@ const findAll = (req, res) => {
 
 // GET /api/detalle/:cabecera_id
 const findByCabeceraId = (req, res) => {
-    const { cabecera_id } = req.params;
-    Detalle.findAll({
-        where: { cabecera_id: cabecera_id }
-    })
+    const { id_cabecera } = req.params;
+    Detalle.findAll(
+            {   where: { id_cabecera: id_cabecera },
+                include: [
+                    {
+                        model: Producto,
+                        attributes: ['nombre', 'precio']
+                    },
+                    {
+                        model: Cabecera,
+                        attributes: ['total']
+                    }
+                ]
+            })
         .then(detalles => {
             if (!detalles) {
                 res.status(200).json({find: false});
@@ -37,11 +58,18 @@ const findByCabeceraId = (req, res) => {
 const create = (req, res) => {
     const detalle = {
         cantidad: req.body.cantidad,
-        cabecera_id: req.body.cabecera_id
-    };
-
+        id_cabecera: req.body.id_cabecera,
+        id_producto: req.body.id_producto
+    }
     Detalle.create(detalle)
-        .then(data => {
+        .then(async data => {
+            const producto = await Producto.findByPk(detalle.id_producto)
+            const cabecera = await Cabecera.findByPk(detalle.id_cabecera);
+            const total = cabecera.total + detalle.cantidad * producto.precio
+            Cabecera.update(
+                { total: total },
+                { where: { id: detalle.id_cabecera } }
+            );
             res.send(data);
         })
         .catch(error => {
@@ -49,7 +77,13 @@ const create = (req, res) => {
                 message:
                     error.message || "Ha ocurrido un error al crear el detalle."
             });
-        });
+        })
+            
+    .catch(error => {
+        console.error(`Error al actualizar la cabecera con id ${detalle.id_cabecera}:`, error);
+        res.status(500).json({ error: `Error al actualizar la cabecera con id ${detalle.id_cabecera}.` });
+    });
+    
 };
 
 module.exports = {

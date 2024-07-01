@@ -37,7 +37,15 @@ const findById = (req, res) => {
 const getCabeceraByMesa = (req, res) => {
     const id = req.params.id;
 
-    Cabecera.findOne({ where: { id_mesa: id, estado: "abierto" } })
+    Cabecera.findOne({
+         where: { id_mesa: id, estado: "abierto" },
+         include: [
+            {
+                model: Cliente,
+                attributes: ['nombre', 'apellido', 'cedula']
+            },
+        ]
+     })
         .then(cabecera => {
             if (!cabecera) {
                 return res.status(404).json({ error: 'Cabecera no encontrada.' });
@@ -54,10 +62,17 @@ const getCabeceraByMesa = (req, res) => {
 // POST /api/cabecera
 const create = (req, res) => {
     const { estado, total, id_cliente, id_mesa } = req.body;
-
     Cabecera.create({ estado, total, id_cliente, id_mesa })
         .then(cabecera => {
-            res.status(201).json(cabecera);
+            return Mesa.update({ estado: 'ocupado' }, {
+                where: {
+                    id: id_mesa,
+                    estado: 'desocupado'
+                }
+            })
+            .then(() => {
+                res.status(201).json(cabecera);
+            });
         })
         .catch(error => {
             console.error('Error al crear la cabecera:', error);
@@ -75,7 +90,26 @@ const cerrar = (req, res) => {
             if (result[0] === 0) {
                 return res.status(404).json({ error: 'Cabecera no encontrada.' });
             }
-            res.sendStatus(204);
+            return Cabecera.findByPk(id, { include: [Cliente, Mesa] })
+                .then(cabecera => {
+                    if (!cabecera) {
+                        return res.status(404).json({ error: 'Cabecera no encontrada.' });
+                    }
+                    return Mesa.update({ estado: 'desocupado' }, {
+                        where: {
+                            id: cabecera.id_mesa,
+                            estado: 'ocupado'
+                        }
+                    })
+                    .then(() => {
+                        res.json(cabecera);
+                    });
+                })
+                .catch(error => {
+                    console.error(`Error al obtener la cabecera con id ${id}:`, error);
+                    res.status(500).json({ error: `Error al obtener la cabecera con id ${id}.` });
+                });
+
         })
         .catch(error => {
             console.error(`Error al cerrar la cabecera con id ${id}:`, error);
