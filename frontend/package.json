@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@primevue/themes": "^4.0.0-rc.2",
+    "jspdf": "^2.5.1",
     "primevue": "^4.0.0-rc.2",
     "tailwindcss-primeui": "^0.3.1",
     "vue": "^3.4.21",

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { jsPDF } from "jspdf";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -66,8 +67,6 @@ const getDetalles = async () => {
         },
     }).then((response) => response.json());
 
-    console.log(Cabecera.value)
-
     const data = await fetch(`${baseUrl}/api/detalle/${Cabecera.value.id}`, {
         headers: {
             "Content-Type": "application/json",
@@ -93,12 +92,12 @@ const handleSubmit = async (e: Event) => {
         if (response.ok) {
             Cabecera.value = await response.json();
             DetallesList.value = await getDetalles();
-            console.log(DetallesList.value)
             await getProductos();
             Mesa.value = selectedMesa.value;
             Ocupado.value = true;
         } else if (response.status === 404) {
             Ocupado.value = false;
+            await getProductos();
         }
 
     } else {
@@ -169,16 +168,13 @@ const pagarConsumo = async () => {
     });
     if (response.ok) {
         Ocupado.value = false;
+        generatePdf();
     }
 }
 
 const cambiarCliente = ref(false)
 
-const handleSelectCliente = async (e: Event) => {
-}
 const visible = ref(false);
-const noClient = ref(false);
-const helperReserva = ref();
 
 const crearUsuario = ref(false);
 const nombre = ref("");
@@ -229,6 +225,25 @@ const handleCrearUsuario = async () => {
         });
 };
 
+const generatePdf = () => {
+    const doc = new jsPDF();
+    doc.text("Factura nro: " + Cabecera.value.id, 10, 10);
+    doc.text("Fecha: " + new Date().toDateString(), 10, 20);
+    doc.text("Cliente: " + Cabecera.value.cliente.nombre + " " + Cabecera.value.cliente.apellido, 10, 30);
+    doc.text("Cedula: " + Cabecera.value.cliente.cedula, 10, 40);
+    doc.text("Mesa: " + Mesa.value.nombre, 10, 50);
+    doc.line(10, 60, 200, 60);
+    doc.text("Producto", 10, 80);
+    doc.text("Cantidad", 80, 80);
+    doc.text("Precio Unitario", 140, 80);
+    DetallesList.value.forEach((detalle: any, index: number) => {
+        doc.text(detalle.producto.nombre, 10, 90 + index * 10);
+        doc.text(detalle.cantidad.toString(), 80, 90 + index * 10);
+        doc.text(detalle.producto.precio.toString(), 140, 90 + index * 10);
+    });
+    doc.text("Total: " + total.value.toString(), 140, 90 + DetallesList.value.length * 10);
+    doc.save("factura.pdf");
+}
 </script>
 
 <template>
@@ -297,18 +312,6 @@ const handleCrearUsuario = async () => {
                         @click="() => agregarProducto = !agregarProducto" />
                     <Button label="Pagar" class="w-[50%]" @click="pagarConsumo" />
                 </div>
-
-
-                <!-- <form @submit="handleSelectCliente">
-                    <h1 class="font-bold text-lg text-center my-2">Cliente</h1>
-                    <div class="w-1/2 mx-auto">
-                        <selectSearch></selectSearch>
-                    </div>
-
-                    <div class="flex gap-4 mt-4 justify-center">
-                        <Button type="submit" label="Buscar" class="w-[50%]" />
-                    </div>
-                </form> -->
             </div>
             <div v-else-if="selectedMesa !== undefined && Ocupado === false">
                 <h1 class="font-bold text-3xl text-center mt-4">Desocupado</h1>
