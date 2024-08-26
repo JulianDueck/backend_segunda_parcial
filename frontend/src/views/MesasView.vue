@@ -348,7 +348,7 @@ const generatePdf = () => {
         <Dialog v-model:visible="cambiarCliente" modal header="Cambiar Cliente" :style="{ width: '25rem' }">
             <div class="flex items-center gap-4 mb-4">
                 <label for="nombre" class="font-semibold w-24">Cedula</label>
-                <Select v-model="selectedCliente" :options="clientes" optionLabel="cedula"
+                <Select filter v-model="selectedCliente" :options="clientes" optionLabel="cedula"
                     placeholder="Seleccione un producto" class="flex-auto" />
             </div>
             <div class="flex justify-end gap-2">
